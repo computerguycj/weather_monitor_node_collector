@@ -2,7 +2,7 @@ name: Daily Node Collector Job
 
 on:
   schedule:
-    - cron: '0 7 * * *'  # Daily at 7am UTC
+    - cron: '1 7 * * *'  # Daily at 7:01 UTC
   workflow_dispatch:     # Optional: manual trigger
 
 jobs:
