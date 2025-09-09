@@ -1,0 +1,35 @@
+{
+  "name": "weather-monitor-app",
+  "version": "1.0.0",
+  "description": "Weather monitoring app that compares two weather stations and collects forecast data",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "weather",
+    "monitoring",
+    "postgresql",
+    "scraping",
+    "cron"
+  ],
+  "author": "Weather Monitor",
+  "license": "MIT",
+  "dependencies": {
+    "@neondatabase/serverless": "^0.9.5",
+    "axios": "^1.6.0",
+    "cheerio": "^1.0.0-rc.12",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "node-cron": "^3.0.3",
+    "puppeteer": "^24.17.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
