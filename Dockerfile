@@ -20,9 +20,6 @@ RUN apt-get update && apt-get install -y \
     fonts-liberation \
     && rm -rf /var/lib/apt/lists/*
 
-# Install only puppeteer-core (not full puppeteer)
-RUN npm install puppeteer-core
-
 # Install other dependencies
 RUN npm install
 
