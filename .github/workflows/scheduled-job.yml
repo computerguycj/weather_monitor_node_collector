@@ -17,29 +17,3 @@ jobs:
 
       - name: Run container
         run: docker run --rm -e DATABASE_URL="${{ secrets.DATABASE_URL }}" node-collector
-
-      - name: Debug Puppeteer inside container
-        run: |
-          docker run --rm node-collector bash -c "
-            echo 'Resolved puppeteer-core path:'
-            node -e \"console.log(require.resolve('puppeteer-core'))\"
-
-            echo 'Chromium executable path:'
-            node -e \"
-              const puppeteer = require('puppeteer-core');
-              puppeteer.launch({
-                executablePath: '/usr/bin/chromium',
-                headless: true,
-                args: ['--no-sandbox', '--disable-setuid-sandbox']
-              }).then(browser => {
-                console.log('✅ Chromium launched successfully');
-                return browser.close();
-              }).catch(err => {
-                console.error('❌ Failed to launch Chromium:', err);
-                process.exit(1);
-              });
-            \"
-
-            echo 'Does Chromium exist?'
-            ls -l /usr/bin/chromium || echo 'Chromium not found'
-          "
