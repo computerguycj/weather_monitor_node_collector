@@ -18,16 +18,8 @@ jobs:
       - name: Run container
         run: docker run --rm -e DATABASE_URL="${{ secrets.DATABASE_URL }}" node-collector
 
-      - name: Debug Puppeteer setup
+      - name: Debug Puppeteer inside container
         run: |
-          echo "Node version:"
-          node -v
-
-          echo "Resolved puppeteer-core path:"
-          node -e "console.log(require.resolve('puppeteer-core'))"
-
-          echo "Chromium executable path:"
-          node -e "console.log(require('puppeteer-core').executablePath())"
-
-          echo "Does Chromium exist?"
-          ls -l /usr/bin/chromium || echo "Chromium not found"
+          docker run --rm node-collector node -e "console.log(require.resolve('puppeteer-core'))"
+          docker run --rm node-collector node -e "console.log(require('puppeteer-core').executablePath())"
+          docker run --rm node-collector ls -l /usr/bin/chromium || echo "Chromium not found"
