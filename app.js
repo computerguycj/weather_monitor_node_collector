@@ -171,7 +171,11 @@ function parseForecastTimeCell(cellText) {
 async function scrapeForecastForDate(forecastDate) {
   const url = `https://www.wunderground.com/hourly/us/wa/blaine/48.99,-122.75/date/${forecastDate}`;
   console.log(`Scraping forecast for ${forecastDate} from ${url}`);
-  const browser = await puppeteer.launch({ headless: true });
+  const browser = await puppeteer.launch({
+    executablePath: '/usr/bin/chromium',
+    headless: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox']
+  });
   const page = await browser.newPage();
   await page.goto(url, { waitUntil: 'networkidle2' });
 
