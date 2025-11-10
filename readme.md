@@ -11,12 +11,6 @@ A Node.js application that monitors and compares weather data from two Weather U
 - **REST API**: Simple API endpoints to access collected data
 - **Automated Scheduling**: Uses cron jobs for automated data collection
 
-## Weather Stations Monitored
-
-- **Station 1**: KWABLAIN153 - https://www.wunderground.com/dashboard/pws/KWABLAIN153
-- **Station 2**: KWABLAIN126 - https://www.wunderground.com/dashboard/pws/KWABLAIN126
-- **Forecast**: Blaine, WA area forecast
-
 ## Database Schema
 
 ### weather_stations
