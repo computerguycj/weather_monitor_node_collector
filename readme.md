@@ -7,7 +7,7 @@ A Node.js application that monitors and compares weather data from two Weather U
 - **Real-time Weather Monitoring**: Scrapes data from two weather stations every 30 minutes
 - **Weather Comparison**: Compares temperature, humidity, and wind speed between stations
 - **Forecast Collection**: Collects 5-day weather forecast data every hour
-- **PostgreSQL Storage**: All data stored in a Neon.tech PostgreSQL database
+- **PostgreSQL Storage**: All data is stored in a Neon.tech PostgreSQL database
 - **REST API**: Simple API endpoints to access collected data
 - **Automated Scheduling**: Uses cron jobs for automated data collection
 
