@@ -1,6 +1,6 @@
 # Weather Monitoring App
 
-A Node.js application that monitors and compares weather data from two Weather Underground stations in Blaine, WA, and collects forecast data. Data is stored in a PostgreSQL database hosted on Neon.tech.
+A Node.js application that monitors and compares weather data from two Weather Underground stations in your local area, and collects forecast data. Data is stored in a PostgreSQL database hosted on Neon.tech.
 
 ## Features
 
