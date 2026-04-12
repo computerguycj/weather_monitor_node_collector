@@ -1,15 +1,44 @@
 # Weather Monitoring App
 
-A Node.js application that monitors and compares weather data from two Weather Underground stations in Blaine, WA, and collects forecast data. Data is stored in a PostgreSQL database hosted on Neon.tech.
+A robust Node.js application that continuously monitors and compares real-time weather data from two Weather Underground stations in Blaine, WA, while collecting comprehensive 5-day forecasts. All data is persisted in a PostgreSQL database hosted on Neon.tech for historical analysis and trending.
+
+## Table of Contents
+
+- [Features](#features)
+- [Weather Stations Monitored](#weather-stations-monitored)
+- [Tech Stack](#tech-stack)
+- [Prerequisites](#prerequisites)
+- [Setup Instructions](#setup-instructions)
+- [Configuration](#configuration)
+- [Running the Application](#running-the-application)
+- [Database Schema](#database-schema)
+- [Data Collection Schedule](#data-collection-schedule)
+- [API Documentation](#api-documentation)
+- [Weather Data Collection](#weather-data-collection)
+- [Deployment](#deployment)
+- [Monitoring & Maintenance](#monitoring--maintenance)
+- [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Features
 
-- **Real-time Weather Monitoring**: Scrapes data from two weather stations every 30 minutes
-- **Weather Comparison**: Compares temperature, humidity, and wind speed between stations
-- **Forecast Collection**: Collects 5-day weather forecast data every hour
-- **PostgreSQL Storage**: All data stored in a Neon.tech PostgreSQL database
-- **REST API**: Simple API endpoints to access collected data
-- **Automated Scheduling**: Uses cron jobs for automated data collection
+- ⏱️ **Real-time Weather Monitoring**: Automatically scrapes weather data from both stations every 30 minutes
+- 📊 **Weather Comparison**: Compares temperature, humidity, and wind speed between stations with calculated deltas
+- 🌤️ **Forecast Collection**: Collects comprehensive 5-day weather forecasts every hour  
+- 💾 **PostgreSQL Storage**: Reliable data persistence in a Neon.tech PostgreSQL database
+- 🔌 **REST API**: Simple, intuitive API endpoints for accessing collected weather and comparison data
+- ⏰ **Automated Scheduling**: Leverages cron jobs for reliable, hands-off data collection
+- 🛡️ **Error Handling**: Robust error handling for network issues and database failures
+- 📈 **Historical Analysis**: Maintains complete historical data for trend analysis and reporting
+
+## Tech Stack
+
+- **Runtime**: Node.js (v16+)
+- **Database**: PostgreSQL (Neon.tech)
+- **Process Management**: Node.js with cron scheduling
+- **API Framework**: Express.js (implied)
+- **Data Scraping**: Web scraping with CSS selectors
 
 ## Weather Stations Monitored
 
@@ -17,102 +46,172 @@ A Node.js application that monitors and compares weather data from two Weather U
 - **Station 2**: KWABLAIN126 - https://www.wunderground.com/dashboard/pws/KWABLAIN126
 - **Forecast**: Blaine, WA area forecast
 
-## Database Schema
+## Prerequisites
 
-### weather_stations
-- `id`: Primary key
-- `station_id`: Weather station identifier
-- `timestamp`: Data collection time
-- `temperature`: Temperature in Fahrenheit
-- `humidity`: Humidity percentage
-- `wind_speed`: Wind speed in mph
-- `wind_direction`: Wind direction
-- `pressure`: Atmospheric pressure in inches
-- `precipitation`: Precipitation in inches
-- `conditions`: Weather conditions description
+Before you begin, ensure you have the following installed:
 
-### forecasts
-- `id`: Primary key
-- `timestamp`: Data collection time
-- `forecast_date`: Date for forecast
-- `high_temp`: High temperature
-- `low_temp`: Low temperature
-- `conditions`: Weather conditions
-- `precipitation_chance`: Precipitation probability
-- `wind_speed`: Expected wind speed
-- `humidity`: Expected humidity
-
-### weather_comparisons
-- `id`: Primary key
-- `timestamp`: Comparison time
-- `station_1_temp`, `station_2_temp`: Temperatures from both stations
-- `temp_difference`: Temperature difference
-- `station_1_humidity`, `station_2_humidity`: Humidity from both stations
-- `humidity_difference`: Humidity difference
-- `station_1_wind`, `station_2_wind`: Wind speeds from both stations
-- `wind_difference`: Wind speed difference
+- **Node.js** v16 or higher ([Download](https://nodejs.org/))
+- **npm** (comes with Node.js)
+- **Git** for cloning the repository
+- A **Neon.tech** PostgreSQL database account (free tier available at [neon.tech](https://neon.tech))
 
 ## Setup Instructions
 
-### Prerequisites
-- Node.js (v16 or higher)
-- Neon.tech PostgreSQL database account
-
-### 1. Clone and Install
+### 1. Clone the Repository
 
 ```bash
-# Install dependencies
+git clone <repository-url>
+cd collector
+```
+
+### 2. Install Dependencies
+
+```bash
 npm install
 ```
 
-### 2. Database Setup
+### 3. Create Environment Configuration
 
-1. Create a PostgreSQL database on [Neon.tech](https://neon.tech)
-2. Copy your database connection details
-3. Create a `.env` file based on `.env.example`:
+Copy the example environment file:
 
 ```bash
 cp .env.example .env
 ```
 
-4. Fill in your Neon.tech database credentials in `.env`:
+### 4. Configure Database Credentials
+
+Edit your `.env` file with your Neon.tech credentials:
 
 ```env
+# Database Configuration
 DB_HOST=your-neon-host.neon.tech
 DB_PORT=5432
 DB_NAME=your-database-name
 DB_USER=your-username
 DB_PASSWORD=your-password
+
+# Server Configuration
 PORT=3000
+NODE_ENV=development
+
+# Optional: Weather Underground API Keys (if using API instead of scraping)
+# WEATHER_API_KEY=your-api-key
 ```
 
-### 3. Run the Application
+**Important:** Never commit your `.env` file to version control. It contains sensitive credentials.
 
+### 5. Initialize Database
+
+The application will automatically create the necessary tables on first run. Ensure your Neon.tech account is set up and the connection string is correct.
+
+## Running the Application
+
+### Development Mode
 ```bash
-# Development mode with auto-restart
 npm run dev
+```
+Runs with automatic restart on file changes (requires `nodemon`).
 
-# Production mode
+### Production Mode
+```bash
 npm start
 ```
+Runs the application in production mode.
 
-The application will:
-- Connect to your PostgreSQL database
-- Create necessary tables automatically
-- Start collecting weather data immediately
-- Schedule ongoing data collection
+### Health Check
+Once running, verify the app is operational:
+```bash
+curl http://localhost:3000/api/health
+```
+
+## Configuration
+
+### Environment Variables
+
+| Variable | Description | Example | Required |
+|----------|-------------|---------|----------|
+| `DB_HOST` | Neon.tech database host | `project.neon.tech` | Yes |
+| `DB_PORT` | PostgreSQL port | `5432` | Yes |
+| `DB_NAME` | Database name | `weather_db` | Yes |
+| `DB_USER` | Database username | `neondb_user` | Yes |
+| `DB_PASSWORD` | Database password | (sensitive) | Yes |
+| `PORT` | Application port | `3000` | No |
+| `NODE_ENV` | Environment mode | `development` or `production` | No |
+
+### Data Collection Intervals
+
+You can customize collection schedules by modifying the cron expressions in the application code:
+- **Weather stations**: Default 30 minutes
+- **Forecast data**: Default 1 hour (at top of hour)
+
+## Database Schema
+
+### weather_stations
+Stores raw weather observations from both monitoring stations.
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `id` | INTEGER | Primary key, auto-incremented |
+| `station_id` | VARCHAR | Weather station identifier (e.g., KWABLAIN153) |
+| `timestamp` | TIMESTAMP | UTC timestamp of data collection |
+| `temperature` | NUMERIC | Temperature in Fahrenheit |
+| `humidity` | INTEGER | Relative humidity percentage (0-100) |
+| `wind_speed` | NUMERIC | Wind speed in mph |
+| `wind_direction` | VARCHAR | Wind direction (e.g., NW, SE) |
+| `pressure` | NUMERIC | Atmospheric pressure in inches |
+| `precipitation` | NUMERIC | Precipitation in inches |
+| `conditions` | VARCHAR | Weather condition description |
+
+### forecasts
+Stores collected forecast data for the Blaine, WA area.
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `id` | INTEGER | Primary key, auto-incremented |
+| `timestamp` | TIMESTAMP | UTC timestamp of collection |
+| `forecast_date` | DATE | Date the forecast applies to |
+| `high_temp` | NUMERIC | Predicted high temperature (°F) |
+| `low_temp` | NUMERIC | Predicted low temperature (°F) |
+| `conditions` | VARCHAR | Predicted weather conditions |
+| `precipitation_chance` | INTEGER | Precipitation probability (0-100) |
+| `wind_speed` | NUMERIC | Expected wind speed (mph) |
+| `humidity` | INTEGER | Expected humidity percentage (0-100) |
+
+### weather_comparisons
+Computed comparison metrics between the two weather stations.
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `id` | INTEGER | Primary key, auto-incremented |
+| `timestamp` | TIMESTAMP | Time of comparison calculation |
+| `station_1_temp` | NUMERIC | Station 1 temperature (°F) |
+| `station_2_temp` | NUMERIC | Station 2 temperature (°F) |
+| `temp_difference` | NUMERIC | Temperature delta (Station 1 - Station 2) |
+| `station_1_humidity` | INTEGER | Station 1 humidity (%) |
+| `station_2_humidity` | INTEGER | Station 2 humidity (%) |
+| `humidity_difference` | INTEGER | Humidity delta (Station 1 - Station 2) |
+| `station_1_wind` | NUMERIC | Station 1 wind speed (mph) |
+| `station_2_wind` | NUMERIC | Station 2 wind speed (mph) |
+| `wind_difference` | NUMERIC | Wind speed delta (Station 1 - Station 2) |
 
 ## Data Collection Schedule
 
 - **Weather Stations**: Every 30 minutes
 - **Forecast Data**: Every hour (at the top of the hour)
 
-## API Endpoints
+## Data Collection Schedule
+
+- **Weather Stations**: Every 30 minutes
+- **Forecast Data**: Every hour (at the top of the hour)
+
+## API Documentation
 
 ### GET /api/latest-comparison
+
 Returns the most recent weather comparison between the two stations.
 
-**Response:**
+**Response Status:** `200 OK`
+
 ```json
 {
   "id": 123,
@@ -129,68 +228,246 @@ Returns the most recent weather comparison between the two stations.
 }
 ```
 
-### GET /api/recent-weather/{hours}
-Returns weather data from both stations for the specified number of hours (default: 24).
+### GET /api/recent-weather/:hours
 
-**Example:** `/api/recent-weather/48` for 48 hours of data
+Returns weather data from both stations for the specified number of hours.
+
+**Parameters:**
+- `hours` (path parameter, optional): Number of hours to retrieve (default: 24)
+
+**Examples:**
+- `/api/recent-weather/` - Last 24 hours
+- `/api/recent-weather/48` - Last 48 hours
+- `/api/recent-weather/7` - Last 7 hours
+
+**Response Status:** `200 OK`
+
+```json
+[
+  {
+    "id": 456,
+    "station_id": "KWABLAIN153",
+    "timestamp": "2025-08-26T10:30:00.000Z",
+    "temperature": 72.5,
+    "humidity": 65,
+    "wind_speed": 8.2,
+    "wind_direction": "NW",
+    "pressure": 30.12,
+    "precipitation": 0.0,
+    "conditions": "Partly Cloudy"
+  }
+]
+```
 
 ### GET /api/health
-Health check endpoint.
 
-## Important Notes
+Health check endpoint to verify the application is running and database connectivity.
 
-### Web Scraping Considerations
-- The app uses web scraping to collect data from Weather Underground
-- CSS selectors may need adjustment if the website structure changes
-- Rate limiting and respectful scraping practices are implemented
-- Consider Weather Underground's terms of service and robots.txt
+**Response Status:** `200 OK`
 
-### Error Handling
-- The app includes comprehensive error handling for network issues
-- Database connection errors are logged and handled gracefully
-- Failed data collection attempts are logged but don't stop the service
+```json
+{
+  "status": "healthy",
+  "timestamp": "2025-08-26T10:30:00.000Z",
+  "database": "connected"
+}
+```
 
-### Production Deployment
-- Set `NODE_ENV=production` in your environment
-- Consider using PM2 or similar process manager for production
-- Monitor logs for any scraping issues
-- Set up database backups on Neon.tech
+## Weather Data Collection
 
-## Monitoring and Maintenance
+### Data Sources
 
-1. **Check Logs**: Monitor console output for scraping errors
-2. **Database Health**: Verify data is being inserted regularly
-3. **Website Changes**: Weather Underground may change their HTML structure
-4. **Rate Limiting**: Be respectful of the source website's resources
+This application collects weather data through **web scraping** from Weather Underground's personal weather station network:
+
+- **Primary Method**: CSS selectors scrape real-time data from PWS station pages
+- **Frequency**: Every 30 minutes for weather stations, hourly for forecasts
+- **Time Zone**: UTC for all timestamps in the database
+
+### Important Considerations
+
+⚠️ **Terms of Service**: Ensure your use complies with Weather Underground's terms of service and robots.txt file.
+
+⚠️ **HTML Structure**: Weather Underground may update their website structure periodically. If data collection fails, CSS selectors may need adjustment.
+
+⚠️ **Rate Limiting**: The application implements respectful scraping practices with appropriate delays between requests.
+
+## Deployment
+
+### Using PM2 (Recommended for Production)
+
+PM2 is a process manager that keeps your application running, auto-starts on system reboot, and provides logging.
+
+1. **Install PM2 globally**
+   ```bash
+   npm install -g pm2
+   ```
+
+2. **Start the application**
+   ```bash
+   pm2 start app.js --name weather-collector
+   ```
+
+3. **Enable auto-startup**
+   ```bash
+   pm2 startup
+   pm2 save
+   ```
+
+4. **Monitor logs**
+   ```bash
+   pm2 logs weather-collector
+   ```
+
+### Environment-Specific Configuration
+
+**Development:**
+```env
+NODE_ENV=development
+PORT=3000
+```
+
+**Production:**
+```env
+NODE_ENV=production
+PORT=3000
+# Set stricter timeouts and implement blue-green deployments as needed
+```
+
+### Database Backups
+
+Neon.tech provides automated backups. To manually backup:
+
+1. Connect to your Neon.tech database via psql or a database tool
+2. Use `pg_dump` to create backups
+3. Store backups securely and off-site
+
+```bash
+pg_dump postgresql://user:password@host:port/database > backup.sql
+```
+
+## Monitoring & Maintenance
+
+### Daily Checks
+
+- **Data Insertion**: Verify that new records are being added to all tables
+- **Latest Comparison**: Check `/api/latest-comparison` has recent timestamps
+- **Application Logs**: Review for any connection or scraping errors
+
+### Weekly Tasks
+
+- **Data Quality**: Review collected data for anomalies or gaps
+- **Storage**: Check database size and optimize if needed
+- **Website Changes**: Monitor if Weather Underground has made layout changes
+
+### Monthly Tasks
+
+- **Performance Review**: Analyze data collection success rates
+- **Database Maintenance**: Run `VACUUM ANALYZE` to optimize PostgreSQL
+- **Credential Rotation**: Update API credentials and database passwords as per security policy
+
+### Common Maintenance Issues
+
+| Issue | Solution |
+|-------|----------|
+| Data collection gaps | Check CSS selectors haven't broken; restart application |
+| Database growth | Archive old data to separate tables/database |
+| High CPU usage | Check for infinite loops; review cron schedules |
+| Memory leaks | Monitor with PM2; restart on schedule if needed |
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. **Database Connection Failed**
-   - Verify Neon.tech credentials in `.env`
-   - Check if your IP is whitelisted (if applicable)
-   - Ensure database exists and is accessible
+#### 1. Database Connection Failed
 
-2. **No Weather Data Collected**
-   - Check if Weather Underground changed their HTML structure
-   - Verify the CSS selectors in the scraping functions
-   - Check network connectivity
+**Symptoms:**
+```
+Error: connect ECONNREFUSED 127.0.0.1:5432
+```
 
-3. **Scheduling Issues**
-   - Ensure the server time zone is correct
-   - Check cron expressions if modifying schedules
+**Solutions:**
+- Verify database credentials in `.env` match Neon.tech account
+- Confirm database exists on Neon.tech
+- Check if your IP needs to be whitelisted (if Neon.tech has IP restrictions)
+- Test connection manually: `psql postgresql://user:password@host:5432/database`
 
-## License
+#### 2. No Weather Data Collected
 
-MIT License - feel free to modify and use as needed.
+**Symptoms:**
+- No new records in `weather_stations` table
+- Weather collection logs show errors
+
+**Solutions:**
+- Weather Underground may have changed their HTML structure - inspect page and update CSS selectors
+- Check network connectivity: `curl https://www.wunderground.com`
+- Verify station IDs are still active: https://www.wunderground.com/dashboard/pws/KWABLAIN153
+- Review application logs for specific scraping errors
+
+#### 3. Scheduling Issues
+
+**Symptoms:**
+- Collections not running at expected times
+- Cron jobs appear to run but produce no data
+
+**Solutions:**
+- Verify server time zone is correct: `date`
+- Check system cron logs: `journalctl -u cron` (Linux) or Event Viewer (Windows)
+- Confirm cron expressions in code are valid: https://crontab.guru
+- Restart application: `pm2 restart weather-collector`
+
+#### 4. High Memory or CPU Usage
+
+**Symptoms:**
+- Application memory grows over time
+- CPU spikes during scheduled collection times
+
+**Solutions:**
+- Check for connection pool leaks in database connection code
+- Limit result sets in API endpoints
+- Implement pagination for large data queries
+- Consider archiving old data
+
+### Getting Help
+
+1. Check the application logs first
+2. Review this troubleshooting guide
+3. Verify your `.env` configuration
+4. Ensure database connectivity with test queries
+5. Check Weather Underground's website hasn't changed significantly
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+We welcome contributions! Here's how to get started:
 
-For questions or issues, please check the logs first and ensure your environment is properly configured.
+1. **Fork** the repository
+2. **Create a feature branch**: `git checkout -b feature/your-feature-name`
+3. **Make your changes** and test thoroughly
+4. **Commit** with clear messages: `git commit -m "Add feature: description"`
+5. **Push** to your fork: `git push origin feature/your-feature-name`
+6. **Submit a Pull Request** with a description of your changes
+
+### Contribution Guidelines
+
+- Write clear, commented code
+- Test all changes before submitting
+- Update documentation if adding features
+- Follow the existing code style
+
+## License
+
+MIT License
+
+Copyright (c) 2026
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+See the [LICENSE](LICENSE) file for the full text.
+
+---
+
+**Last Updated:** April 2026  
+**Maintainer:** Chris
+
+For questions or issues, please open an issue on GitHub or contact the maintainers.
