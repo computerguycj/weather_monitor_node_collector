@@ -1,52 +1,17 @@
 # Weather Monitoring App
 
-A robust Node.js application that continuously monitors and compares real-time weather data from two Weather Underground stations in Blaine, WA, while collecting comprehensive 5-day forecasts. All data is persisted in a PostgreSQL database hosted on Neon.tech for historical analysis and trending.
-
-## Table of Contents
-
-- [Features](#features)
-- [Weather Stations Monitored](#weather-stations-monitored)
-- [Tech Stack](#tech-stack)
-- [Prerequisites](#prerequisites)
-- [Setup Instructions](#setup-instructions)
-- [Configuration](#configuration)
-- [Running the Application](#running-the-application)
-- [Database Schema](#database-schema)
-- [Data Collection Schedule](#data-collection-schedule)
-- [API Documentation](#api-documentation)
-- [Weather Data Collection](#weather-data-collection)
-- [Deployment](#deployment)
-- [Monitoring & Maintenance](#monitoring--maintenance)
-- [Troubleshooting](#troubleshooting)
-- [Contributing](#contributing)
-- [License](#license)
+A Node.js application that monitors and compares weather data from two Weather Underground stations in your local area, and collects forecast data. Data is stored in a PostgreSQL database hosted on Neon.tech.
 
 ## Features
 
-- ⏱️ **Real-time Weather Monitoring**: Automatically scrapes weather data from both stations every 30 minutes
-- 📊 **Weather Comparison**: Compares temperature, humidity, and wind speed between stations with calculated deltas
-- 🌤️ **Forecast Collection**: Collects comprehensive 5-day weather forecasts every hour  
-- 💾 **PostgreSQL Storage**: Reliable data persistence in a Neon.tech PostgreSQL database
-- 🔌 **REST API**: Simple, intuitive API endpoints for accessing collected weather and comparison data
-- ⏰ **Automated Scheduling**: Leverages cron jobs for reliable, hands-off data collection
-- 🛡️ **Error Handling**: Robust error handling for network issues and database failures
-- 📈 **Historical Analysis**: Maintains complete historical data for trend analysis and reporting
+- **Real-time Weather Monitoring**: Scrapes data from two weather stations every 30 minutes
+- **Weather Comparison**: Compares temperature, humidity, and wind speed between stations
+- **Forecast Collection**: Collects 5-day weather forecast data every hour
+- **PostgreSQL Storage**: All data is stored in a Neon.tech PostgreSQL database
+- **REST API**: Simple API endpoints to access collected data
+- **Automated Scheduling**: Uses cron jobs for automated data collection
 
-## Tech Stack
-
-- **Runtime**: Node.js (v16+)
-- **Database**: PostgreSQL (Neon.tech)
-- **Process Management**: Node.js with cron scheduling
-- **API Framework**: Express.js (implied)
-- **Data Scraping**: Web scraping with CSS selectors
-
-## Weather Stations Monitored
-
-- **Station 1**: KWABLAIN153 - https://www.wunderground.com/dashboard/pws/KWABLAIN153
-- **Station 2**: KWABLAIN126 - https://www.wunderground.com/dashboard/pws/KWABLAIN126
-- **Forecast**: Blaine, WA area forecast
-
-## Prerequisites
+## Database Schema
 
 Before you begin, ensure you have the following installed:
 
@@ -470,4 +435,4 @@ See the [LICENSE](LICENSE) file for the full text.
 **Last Updated:** April 2026  
 **Maintainer:** Chris
 
-For questions or issues, please open an issue on GitHub or contact the maintainers.
+For questions or issues, please check the logs first and ensure your environment is properly configured.
